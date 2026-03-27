@@ -354,6 +354,7 @@ export function CameraFeed() {
           objectFit: 'cover',
           zIndex: 1,
           display: 'block',
+          transform: 'scaleX(-1)',
         }}
       />
 
