@@ -38,26 +38,7 @@ interface SecurityContextType {
 
 const SecurityContext = createContext<SecurityContextType | undefined>(undefined);
 
-const defaultAuthorizedUsers: AuthorizedUser[] = [
-  {
-    id: '1',
-    name: 'John Smith',
-    imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
-    addedAt: new Date('2024-01-15'),
-  },
-  {
-    id: '2',
-    name: 'Sarah Johnson',
-    imageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face',
-    addedAt: new Date('2024-01-20'),
-  },
-  {
-    id: '3',
-    name: 'Mike Chen',
-    imageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face',
-    addedAt: new Date('2024-02-01'),
-  },
-];
+const defaultAuthorizedUsers: AuthorizedUser[] = [];
 
 export function SecurityProvider({ children }: { children: ReactNode }) {
   const [isSystemActive, setIsSystemActive] = useState(true);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Plus, Upload, X, Search } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -23,6 +23,7 @@ export default function AuthorizedUsers() {
   const [newUserName, setNewUserName] = useState('');
   const [newUserImage, setNewUserImage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleAddUser = () => {
     if (newUserName.trim() && newUserImage.trim()) {
@@ -36,15 +37,20 @@ export default function AuthorizedUsers() {
     }
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setNewUserImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const filteredUsers = authorizedUsers.filter(user =>
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const sampleImages = [
-    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face',
-    'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face',
-    'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200&h=200&fit=crop&crop=face',
-  ];
 
   return (
     <DashboardLayout>
@@ -94,36 +100,23 @@ export default function AuthorizedUsers() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="image">Profile Image URL</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="image"
-                      value={newUserImage}
-                      onChange={(e) => setNewUserImage(e.target.value)}
-                      placeholder="https://example.com/photo.jpg"
-                      className="bg-muted/50 border-border"
+                  <Label htmlFor="image">Profile Image</Label>
+                  <div className="flex flex-col gap-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      onChange={handleImageUpload}
+                      className="hidden"
                     />
-                    <Button variant="outline" size="icon">
-                      <Upload className="w-4 h-4" />
+                    <Button 
+                      variant="outline" 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full h-24 border-dashed border-2 flex flex-col items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors"
+                    >
+                      <Upload className="w-6 h-6 mb-2" />
+                      Click to upload a clear face photo
                     </Button>
-                  </div>
-                </div>
-
-                {/* Sample images */}
-                <div className="space-y-2">
-                  <Label>Or select a sample image</Label>
-                  <div className="flex gap-2">
-                    {sampleImages.map((img, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setNewUserImage(img)}
-                        className={`w-12 h-12 rounded-full overflow-hidden border-2 transition-colors ${
-                          newUserImage === img ? 'border-primary' : 'border-border hover:border-primary/50'
-                        }`}
-                      >
-                        <img src={img} alt="" className="w-full h-full object-cover" />
-                      </button>
-                    ))}
                   </div>
                 </div>
 
@@ -213,7 +206,7 @@ export default function AuthorizedUsers() {
               {searchQuery ? 'No users found' : 'No authorized users yet'}
             </p>
             <p className="text-sm text-muted-foreground/70 mt-1">
-              {searchQuery ? 'Try a different search term' : 'Add your first authorized user to get started'}
+              {searchQuery ? 'Try a different search term' : 'Add a clear photo of your face to get started'}
             </p>
           </motion.div>
         )}
